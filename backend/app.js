@@ -1,6 +1,9 @@
-import express from 'express';
+const express = require('express');
 const app = express();
+const routes = require('./routes/routes');
 const port = 3000;
+
+app.use('/api', routes);
 
 app.get('/', (req, res) => {
   res.send('Hello, FocusFlow Backend!');
