@@ -1,9 +1,10 @@
 const express = require('express');
 const app = express();
-const routes = require('./routes/routes');
+const connectDB = require('./config/database');
+
 const port = 3000;
 
-app.use('/api', routes);
+connectDB();
 
 app.get('/', (req, res) => {
   res.send('Hello, FocusFlow Backend!');
