@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 const connectDB = async () => {
   try {
-    const connection = await mongoose.connect('mongodb+srv://muazshafiq18:vO5D8ngSvkt5DuuG@cluster0.iqxdiwg.mongodb.net/?retryWrites=true&w=majority', {
+    const connection = await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
@@ -15,5 +16,3 @@ const connectDB = async () => {
 };
 
 module.exports = connectDB;
-//mongodb+srv://muazshafiq18:vO5D8ngSvkt5DuuG@cluster0.iqxdiwg.mongodb.net/?retryWrites=true&w=majority
-//mongodb://muazshafiq18:vO5D8ngSvkt5DuuG@localhost:27017/yourdatabase
