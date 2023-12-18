@@ -23,10 +23,6 @@ const Login = ({ navigation }) => {
                         Hi Welcome Back ! 👋
                     </Text>
 
-                    <Text style={{
-                        fontSize: 16,
-                        color: COLORS.blue
-                    }}>Hello again you have been missed!</Text>
                 </View>
 
                 <View style={{ marginBottom: 12 }}>
