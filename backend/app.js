@@ -1,15 +1,18 @@
 require("dotenv").config();
 const express = require("express");
+const bodyParser = require('body-parser');
 const app = express();
 const connectDB = require("./config/database");
 const session = require("express-session");
-const passport = require("./auth/auth"); // Import the auth module
+const passport = require("./auth/auth");
 const authRoutes = require("./routes/authRoutes");
 const { ensureAuthenticated } = require("./middleware/authMiddleware");
 
 const PORT = process.env.PORT;
 
 connectDB();
+
+app.use(bodyParser.json());
 
 // Enable sessions
 app.use(
