@@ -49,9 +49,8 @@ const Login: React.FC = () => {
             >
               Signup
             </button>
-
             <button
-              className={`w-32 py-2 px-3 text-${activePage === 'login' ? 'black' : 'white'} bg-${activePage === 'login' ? 'white' : 'customGray'} border border-white rounded-md focus:outline-none focus:border-blue-600`}
+              className={`w-32 py-2 px-3 text-${activePage === 'login' ? 'black' : 'white'} bg-${activePage === 'login' ? 'white' : 'customGray'} border border-${activePage === 'login' ? 'white' : 'customGray'} rounded-md focus:outline-none focus:border-blue-600`}
               onClick={handleLogin}
             >
               Login

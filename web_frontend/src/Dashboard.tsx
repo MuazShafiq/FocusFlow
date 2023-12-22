@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faInbox,faCalendarAlt,faCog,faPlusSquare} from '@fortawesome/free-solid-svg-icons';
-import MyCalendar from './MyCalendar';
+import { faInbox, faCalendarAlt, faCog, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
+import Calendar from 'react-calendar';
 import Logo from '../src/assets/Logo.png';
 import 'react-calendar/dist/Calendar.css';
 
@@ -20,12 +20,16 @@ const Dashboard: React.FC = () => {
     description: string;
   } | null>(null);
 
-  // Handles the click event of buttons
+  const [tasksByDate, setTasksByDate] = useState<{ [date: string]: { name: string; description: string }[] }>({});
+
   const handleButtonClick = (buttonName: string) => {
     if (selectedButton === buttonName) {
       setSelectedButton('');
       setShowCalendarContent(false);
       setShowAdditionalRectangle(false);
+      setShowTaskNameField(false);
+      setShowDescriptionField(false);
+      setShowDoneButton(false);
     } else {
       setSelectedButton(buttonName);
       if (buttonName === 'calendar') {
@@ -34,29 +38,41 @@ const Dashboard: React.FC = () => {
       } else {
         setShowCalendarContent(false);
         setShowAdditionalRectangle(false);
+        setShowTaskNameField(false);
+        setShowDescriptionField(false);
+        setShowDoneButton(false);
       }
     }
   };
 
-  // Handles the click event of "Add Rectangle" button
   const handleAddRectangleClick = () => {
     setShowAdditionalRectangle(!showAdditionalRectangle);
+    setShowTaskNameField(true);
+    setShowDescriptionField(true);
+    setShowDoneButton(true);
   };
 
   const handleDoneButtonClick = () => {
-    console.log('Task Name:', taskName);
-    console.log('Description:', description);
-  
     setDisplayedTask({ name: taskName, description });
-  
     setTaskName('');
     setDescription('');
-  
-    setShowTaskNameField(false); // Hide Task Name field
-    setShowDescriptionField(false); // Hide Description field
-  
-    setShowAdditionalRectangle(true); // Show the rectangle
-    setShowDoneButton(false); // Hide the Done button
+    setShowTaskNameField(false);
+    setShowDescriptionField(false);
+    setShowAdditionalRectangle(true);
+    setShowDoneButton(false);
+
+    const date = new Date().toISOString().split('T')[0];
+    if (tasksByDate[date]) {
+      setTasksByDate({
+        ...tasksByDate,
+        [date]: [...tasksByDate[date], { name: taskName, description }],
+      });
+    } else {
+      setTasksByDate({
+        ...tasksByDate,
+        [date]: [{ name: taskName, description }],
+      });
+    }
   };
 
   return (
@@ -107,7 +123,6 @@ const Dashboard: React.FC = () => {
           {/* Main Content Area */}
           <div className="bg-customGray2 rounded-lg py-3 flex flex-col items-center justify-between flex-2 mb-[-5px] mr-2" style={{ width: '45%', minWidth: '100px' }}>
             <div className="w-full flex flex-col items-start">
-              {/* Display "Add Task" rectangle if Calendar button is selected */}
               {showCalendarContent && (
                 <div className="bg-customGray rounded-lg p-4 w-11/12 mx-auto mt-4 mb-2 text-white flex items-center">
                   <FontAwesomeIcon icon={faPlusSquare} className="mr-2" onClick={handleAddRectangleClick} />
@@ -115,10 +130,8 @@ const Dashboard: React.FC = () => {
                 </div>
               )}
 
-              {/* Display additional rectangle if "Add Task" button is clicked */}
               {showAdditionalRectangle && (
                 <div className="bg-customGray rounded-lg p-4 w-11/12 mx-auto mt-2 mb-2 flex flex-col text-white">
-                  {/* Display entered task name and description */}
                   {displayedTask && (
                     <div className="flex flex-col">
                       <h3 className="text-white mb-2">{displayedTask.name}</h3>
@@ -152,24 +165,35 @@ const Dashboard: React.FC = () => {
                     </div>
                   )}
                   {showDoneButton && (
-                  <button
-                    className="bg-customGray2 text-white py-2 px-4 rounded-md"
-                    onClick={handleDoneButtonClick}
-                  >
-                    Done
-                  </button>
-                )}
+                    <button
+                      className="bg-customGray2 text-white py-2 px-4 rounded-md"
+                      onClick={handleDoneButtonClick}
+                    >
+                      Done
+                    </button>
+                  )}
                 </div>
               )}
             </div>
           </div>
           {/* Placeholder for additional content */}
-          <div className="bg-customGray2 rounded-lg py-3 flex items-center flex-4 mb-[-5px]" style={{ width: '100%', minWidth: '200px' }}>
-            {/* Center the Calendar and increase its size */}
+          <div className="bg-customGray2 rounded-lg py-3 flex items-center flex-4 mb-[-5px]" style={{ width: '100%', minWidth: '200px', justifyContent: 'center' }}>
             {showCalendarContent && (
-            <div className="w-full flex justify-center">
-              <MyCalendar />
-            </div>
+              <div className="text-center">
+                <Calendar
+                  tileContent={({ date }) => {
+                    const formattedDate = date.toISOString().split('T')[0];
+                    if (tasksByDate[formattedDate]) {
+                      return tasksByDate[formattedDate].map((task, index) => (
+                        <div key={index}>
+                          {task.name} - {task.description}
+                        </div>
+                      ));
+                    }
+                    return null;
+                  }}
+                />
+              </div>
             )}
           </div>
         </div>
